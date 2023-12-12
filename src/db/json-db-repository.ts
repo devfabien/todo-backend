@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { JsonDB, Config } from 'node-json-db';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -17,17 +17,10 @@ export class JsonDbRepository<T> {
   }
 
   async findOne(id: string): Promise<T | null> {
-    try {
-      const data = await this.db.getData(
-        `/${this.tableName}[${await this.db.getIndex(
-          `/${this.tableName}`,
-          id,
-        )}]`,
-      );
-      return data;
-    } catch (error) {
-      return null;
-    }
+    const index = await this.db.getIndex(`/${this.tableName}`, id);
+    if (index < 0) throw new NotFoundException(`id doesn't exist`);
+    const data = await this.db.getData(`/${this.tableName}[${index}]`);
+    return data;
   }
 
   async create(data: T) {
@@ -37,9 +30,9 @@ export class JsonDbRepository<T> {
   }
 
   async remove(id: string): Promise<string> {
-    this.db.delete(
-      `/${this.tableName}[${await this.db.getIndex(`/${this.tableName}`, id)}]`,
-    );
+    const index = await this.db.getIndex(`/${this.tableName}`, id);
+    if (index < 0) throw new NotFoundException(`id doesn't exist`);
+    this.db.delete(`/${this.tableName}[${index}]`);
     return `Data deleted successfully`;
   }
 }
