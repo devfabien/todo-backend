@@ -56,4 +56,12 @@ describe('TasksService', () => {
       expect(result).toEqual([mockTask]);
     });
   });
+  describe('find one', () => {
+    it('should find and return a single task', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(mockTask);
+      const result = await taskService.findOne(mockTask.id);
+      expect(repository.findOne).toHaveBeenCalledWith(mockTask.id);
+      expect(result).toEqual(mockTask);
+    });
+  });
 });
