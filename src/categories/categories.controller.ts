@@ -1,6 +1,14 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { Category } from './entity/category.entity';
+import { CreateCategoryDto } from './dto/create-category.dto';
 
 @Controller('categories')
 export class CategoriesController {
@@ -12,7 +20,8 @@ export class CategoriesController {
   }
 
   @Post()
-  async createCategory(@Body() category: Category): Promise<Category> {
+  @UsePipes(new ValidationPipe())
+  async createCategory(@Body() category: CreateCategoryDto): Promise<Category> {
     return await this.categoryService.create(category);
   }
 }
