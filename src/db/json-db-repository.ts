@@ -7,7 +7,7 @@ export class JsonDbRepository<T> {
   private db: JsonDB;
 
   constructor(private tableName: string) {
-    const config = new Config('todos', true, false, '/');
+    const config = new Config('todos', true, true, '/');
     this.db = new JsonDB(config);
     this.db.push(`/${this.tableName}`, []);
   }
