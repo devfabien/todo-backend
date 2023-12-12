@@ -18,7 +18,7 @@ export class TasksController {
   }
 
   @Post()
-  async createTask(@Body() task: CreateTaskDto): Promise<Task | string> {
+  async createTask(@Body() task: CreateTaskDto): Promise<Task> {
     const newTask = { ...task, status: TaskStatus.OPEN };
 
     return this.taskService.create(newTask);
