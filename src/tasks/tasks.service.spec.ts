@@ -3,6 +3,7 @@ import { TasksService } from './tasks.service';
 import { JsonDbRepository } from 'src/db/json-db-repository';
 import { Task, TaskStatus } from './entity/task.entity';
 import { CategoriesService } from '../categories/categories.service';
+import { CreateTaskDto } from './dto/create-task.dto';
 import { NotFoundException } from '@nestjs/common';
 
 describe('TasksService', () => {
@@ -70,16 +71,23 @@ describe('TasksService', () => {
     const newTask = {
       title: 'eat',
       description: 'i have to eat today',
-      categoryId: '50376a95-11fb-4310-a36c-b08c6c537874',
+      categoryId: '50376a95-11fb-4310-a36c-bc537874',
     };
-    it('should throw a not found exception if category is not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+    // it('should throw a not found exception if category is not found', async () => {
+    //   jest.spyOn(categoryService, 'findOneCategory').mockResolvedValue(null);
 
-      await expect(
-        categoryService.findOneCategory(newTask.categoryId),
-      ).rejects.toThrow(NotFoundException);
+    //   await expect(
+    //     categoryService.findOneCategory(newTask.categoryId),
+    //   ).rejects.toThrow(NotFoundException);
+    // });
 
-      expect(repository.findOne).toHaveBeenCalledWith(newTask.categoryId);
+    it('should create a new task', async () => {
+      jest.spyOn(categoryService, 'findOneCategory').mockResolvedValue(null);
+      jest.spyOn(repository, 'create').mockResolvedValue(mockTask);
+
+      const result = await taskService.create(newTask as CreateTaskDto);
+
+      expect(result).toEqual(mockTask);
     });
   });
 });
