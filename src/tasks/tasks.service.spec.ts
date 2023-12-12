@@ -49,4 +49,11 @@ describe('TasksService', () => {
   it('should be defined', () => {
     expect(taskService).toBeDefined();
   });
+  describe('find all', () => {
+    it('should find and return all task', async () => {
+      jest.spyOn(repository, 'findAll').mockResolvedValue([mockTask]);
+      const result = await taskService.findAll();
+      expect(result).toEqual([mockTask]);
+    });
+  });
 });
