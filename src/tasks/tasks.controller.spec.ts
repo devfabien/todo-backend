@@ -40,10 +40,18 @@ describe('TasksController', () => {
   it('should be defined', () => {
     expect(taskController).toBeDefined();
   });
-  describe('create', () => {
-    it('should create a new task', async () => {
+  describe('getTask', () => {
+    it('should get a single task', async () => {
       const result = await taskController.getTask(mockTask.id);
+      expect(taskService.findOne).toHaveBeenCalled();
       expect(result).toEqual(mockTask);
+    });
+  });
+  describe('getAllTasks', () => {
+    it('should return all tasks', async () => {
+      const result = await taskController.getAllTasks();
+      expect(taskService.findAll).toHaveBeenCalled();
+      expect(result).toEqual([mockTask]);
     });
   });
 });
