@@ -20,14 +20,6 @@ export class CategoriesService {
     return await this.categoryRepository.findAll();
   }
 
-  async findOneCategory(id: string): Promise<Category> {
-    const foundcategory = await this.categoryRepository.findOne(id);
-    if (!foundcategory) {
-      throw new NotFoundException(`Category id not found`);
-    }
-    return foundcategory;
-  }
-
   async create(category: Category): Promise<Category> {
     const foundCategory = (await this.findAll())?.find(
       (item) => item.name == category.name,
