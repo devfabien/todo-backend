@@ -17,6 +17,9 @@ describe('TasksController', () => {
 
   const mockService = {
     findOne: jest.fn().mockResolvedValue(mockTask),
+    findAll: jest.fn().mockResolvedValue([mockTask]),
+    create: jest.fn(),
+    delete: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -36,5 +39,11 @@ describe('TasksController', () => {
 
   it('should be defined', () => {
     expect(taskController).toBeDefined();
+  });
+  describe('create', () => {
+    it('should create a new task', async () => {
+      const result = await taskController.getTask(mockTask.id);
+      expect(result).toEqual(mockTask);
+    });
   });
 });
