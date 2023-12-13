@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CategoriesService } from './categories.service';
 import { JsonDbRepository } from 'src/db/json-db-repository';
 import { Category } from './entity/category.entity';
+import { CreateCategoryDto } from './dto/create-category.dto';
 
 describe('CategoriesService', () => {
   let categoryService: CategoriesService;
@@ -33,5 +34,17 @@ describe('CategoriesService', () => {
 
   it('should be defined', () => {
     expect(categoryService).toBeDefined();
+  });
+  describe('create category', () => {
+    const newCategory = {
+      name: 'first category',
+    };
+    it('should create a new category', async () => {
+      jest.spyOn(repository, 'create').mockResolvedValue(mockCategory);
+      const result = await categoryService.create(
+        newCategory as CreateCategoryDto,
+      );
+      expect(result).toEqual(mockCategory);
+    });
   });
 });
