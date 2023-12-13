@@ -95,5 +95,12 @@ describe('CategoriesService', () => {
         'Data deleted successfully',
       );
     });
+    it('should throw a not found exception if category is not found', async () => {
+      jest.spyOn(repository, 'remove').mockResolvedValue(null);
+
+      expect(categoryService.delete(mockCategory.id)).rejects.toThrow(
+        NotFoundException,
+      );
+    });
   });
 });
