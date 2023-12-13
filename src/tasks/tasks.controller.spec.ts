@@ -20,7 +20,7 @@ describe('TasksController', () => {
     findOne: jest.fn().mockResolvedValue(mockTask),
     findAll: jest.fn().mockResolvedValue([mockTask]),
     create: jest.fn().mockResolvedValue(mockTask),
-    delete: jest.fn(),
+    remove: jest.fn().mockResolvedValue('Data deleted successfully'),
   };
 
   beforeEach(async () => {
@@ -66,6 +66,14 @@ describe('TasksController', () => {
       const result = await taskController.createTask(newTask as CreateTaskDto);
       expect(taskService.create).toHaveBeenCalled();
       expect(result).toEqual(mockTask);
+    });
+  });
+  describe('deleteTask', () => {
+    it('should delete a task', async () => {
+      const result = await taskController.deleteTask(mockTask.id);
+
+      expect(taskService.remove).toHaveBeenCalled();
+      expect(result).toEqual('Data deleted successfully');
     });
   });
 });
