@@ -2,11 +2,10 @@ import { Module } from '@nestjs/common';
 import { TasksService } from './tasks.service';
 import { TasksController } from './tasks.controller';
 import { Task } from './entity/task.entity';
-import { JsonDbRepository } from 'src/db/json-db-repository';
-import { CategoriesModule } from 'src/categories/categories.module';
+import { JsonDbRepository } from '../db/json-db-repository';
 
 @Module({
-  imports: [CategoriesModule],
+  imports: [],
   providers: [
     TasksService,
     {
@@ -15,5 +14,6 @@ import { CategoriesModule } from 'src/categories/categories.module';
     },
   ],
   controllers: [TasksController],
+  exports: [TasksService],
 })
 export class TasksModule {}
