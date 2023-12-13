@@ -11,7 +11,9 @@ import {
 import { TasksService } from './tasks.service';
 import { Task } from './entity/task.entity';
 import { CreateTaskDto } from './dto/create-task.dto';
+import { ApiResponse, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Tasks')
 @Controller('tasks')
 export class TasksController {
   constructor(private taskService: TasksService) {}
@@ -27,6 +29,11 @@ export class TasksController {
   }
 
   @Post()
+  @ApiResponse({
+    status: 201,
+    type: CreateTaskDto,
+    description: 'Task is created successfully',
+  })
   @UsePipes(new ValidationPipe())
   async createTask(@Body() task: CreateTaskDto): Promise<Task> {
     return this.taskService.create(task);
