@@ -1,18 +1,37 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CategoriesService } from './categories.service';
+import { JsonDbRepository } from 'src/db/json-db-repository';
+import { Category } from './entity/category.entity';
 
 describe('CategoriesService', () => {
-  let service: CategoriesService;
+  let categoryService: CategoriesService;
+  let repository: JsonDbRepository<Category>;
 
+  const mockCategory = {
+    id: '9abefa25-9d39-45d8-9840-145e9ea6b9d4',
+    name: 'first category',
+  };
+  const mockService = {
+    findAll: jest.fn(),
+    findOneCategory: jest.fn(),
+    create: jest.fn(),
+  };
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      providers: [CategoriesService],
+      providers: [
+        CategoriesService,
+        {
+          provide: 'CategoryRepository',
+          useValue: mockService,
+        },
+      ],
     }).compile();
 
-    service = module.get<CategoriesService>(CategoriesService);
+    categoryService = module.get<CategoriesService>(CategoriesService);
+    repository = module.get<JsonDbRepository<Category>>('CategoryRepository');
   });
 
   it('should be defined', () => {
-    expect(service).toBeDefined();
+    expect(categoryService).toBeDefined();
   });
 });
