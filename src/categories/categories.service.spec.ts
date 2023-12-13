@@ -61,4 +61,12 @@ describe('CategoriesService', () => {
       expect(result).rejects.toThrow(NotFoundException);
     });
   });
+  describe('findAll', () => {
+    it('should find all categories', async () => {
+      jest.spyOn(repository, 'findAll').mockResolvedValue([mockCategory]);
+
+      const result = await categoryService.findAll();
+      expect(result).toEqual([mockCategory]);
+    });
+  });
 });
