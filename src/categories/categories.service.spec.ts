@@ -3,6 +3,7 @@ import { CategoriesService } from './categories.service';
 import { JsonDbRepository } from 'src/db/json-db-repository';
 import { Category } from './entity/category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
+import { NotFoundException } from '@nestjs/common';
 
 describe('CategoriesService', () => {
   let categoryService: CategoriesService;
@@ -53,6 +54,11 @@ describe('CategoriesService', () => {
       jest.spyOn(repository, 'findOne').mockResolvedValue(mockCategory);
       const result = await categoryService.findOneCategory(mockCategory.id);
       expect(result).toEqual(mockCategory);
+    });
+    it('should should throw a NotFoundException if category not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      const result = categoryService.findOneCategory(mockCategory.id);
+      expect(result).rejects.toThrow(NotFoundException);
     });
   });
 });
