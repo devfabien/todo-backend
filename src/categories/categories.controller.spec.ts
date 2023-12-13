@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CategoriesController } from './categories.controller';
 import { CategoriesService } from './categories.service';
+import { CreateCategoryDto } from './dto/create-category.dto';
 
 describe('CategoriesController', () => {
   let categoryController: CategoriesController;
@@ -42,6 +43,20 @@ describe('CategoriesController', () => {
 
       expect(categoryService.findAll).toHaveBeenCalled();
       expect(result).toEqual([mockCategory]);
+    });
+  });
+
+  describe('createCategory', () => {
+    it('should create a new category', async () => {
+      const newCategory = {
+        name: 'first category',
+      };
+      const result = await categoryController.createCategory(
+        newCategory as CreateCategoryDto,
+      );
+
+      expect(categoryService.create).toHaveBeenCalled();
+      expect(result).toEqual(mockCategory);
     });
   });
 });
