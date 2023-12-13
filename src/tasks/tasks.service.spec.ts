@@ -23,6 +23,7 @@ describe('TasksService', () => {
     findAll: jest.fn(),
     findOne: jest.fn(),
     create: jest.fn(),
+    remove: jest.fn(),
   };
 
   beforeEach(async () => {
@@ -65,21 +66,21 @@ describe('TasksService', () => {
       expect(repository.findOne).toHaveBeenCalledWith(mockTask.id);
       expect(result).toEqual(mockTask);
     });
+    it('should throw a NotFoundException if the task is not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+
+      expect(taskService.findOne(mockTask.id)).rejects.toThrow(
+        NotFoundException,
+      );
+    });
   });
 
   describe('create', () => {
     const newTask = {
       title: 'eat',
       description: 'i have to eat today',
-      categoryId: '50376a95-11fb-4310-a36c-bc537874',
+      categoryId: '50376a95-11fb-4310-a36c-b08c6c537874',
     };
-    // it('should throw a not found exception if category is not found', async () => {
-    //   jest.spyOn(categoryService, 'findOneCategory').mockResolvedValue(null);
-
-    //   await expect(
-    //     categoryService.findOneCategory(newTask.categoryId),
-    //   ).rejects.toThrow(NotFoundException);
-    // });
 
     it('should create a new task', async () => {
       jest.spyOn(categoryService, 'findOneCategory').mockResolvedValue(null);
