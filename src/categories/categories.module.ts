@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { CategoriesService } from './categories.service';
 import { CategoriesController } from './categories.controller';
 import { Category } from './entity/category.entity';
-import { JsonDbRepository } from 'src/db/json-db-repository';
+import { JsonDbRepository } from '../db/json-db-repository';
 
 @Module({
   imports: [],
