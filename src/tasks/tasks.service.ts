@@ -1,7 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 import { Task, TaskStatus } from './entity/task.entity';
-import { JsonDbRepository } from 'src/db/json-db-repository';
-import { CategoriesService } from 'src/categories/categories.service';
+import { JsonDbRepository } from '../db/json-db-repository';
+import { CategoriesService } from '../categories/categories.service';
 
 @Injectable()
 export class TasksService {
@@ -15,19 +15,25 @@ export class TasksService {
   }
 
   async findOne(id: string): Promise<Task | null> {
-    return await this.taskRepository.findOne(id);
+    const foundTask = await this.taskRepository.findOne(id);
+    if (!foundTask) {
+      throw new NotFoundException(`Task id not found`);
+    }
+    return foundTask;
   }
 
   async create(task: Task): Promise<Task> {
-    const catId = task.categoryId;
-    const cate = await this.categoryService.findAll();
-    const single = cate.find((category) => category.id === catId);
+    await this.categoryService.findOneCategory(task.categoryId);
+
     const newTask = { ...task, status: TaskStatus.OPEN };
-    if (!single) throw new NotFoundException(`Category id doesn't exist`);
     return await this.taskRepository.create(newTask);
   }
 
   async remove(id: string): Promise<string> {
-    return await this.taskRepository.remove(id);
+    const foundTask = await this.taskRepository.remove(id);
+    if (!foundTask) {
+      throw new NotFoundException(`Task id not found`);
+    }
+    return foundTask;
   }
 }
