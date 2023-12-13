@@ -19,6 +19,7 @@ describe('CategoriesService', () => {
     findAll: jest.fn(),
     findOne: jest.fn(),
     create: jest.fn(),
+    remove: jest.fn(),
   };
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -82,6 +83,17 @@ describe('CategoriesService', () => {
 
       const result = await categoryService.findAll();
       expect(result).toEqual([mockCategory]);
+    });
+  });
+  describe('delete', () => {
+    it('should delete a category', async () => {
+      jest
+        .spyOn(repository, 'remove')
+        .mockResolvedValue('Data deleted successfully');
+
+      expect(await categoryService.delete(mockCategory.id)).toEqual(
+        'Data deleted successfully',
+      );
     });
   });
 });
