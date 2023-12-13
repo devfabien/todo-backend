@@ -91,4 +91,15 @@ describe('TasksService', () => {
       expect(result).toEqual(mockTask);
     });
   });
+  describe('delete', () => {
+    it('should delete a task', async () => {
+      jest
+        .spyOn(repository, 'remove')
+        .mockResolvedValue('Data deleted successfully');
+
+      const result = await taskService.remove(mockTask.id);
+
+      expect(result).toEqual('Data deleted successfully');
+    });
+  });
 });
