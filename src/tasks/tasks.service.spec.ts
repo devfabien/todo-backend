@@ -81,9 +81,15 @@ describe('TasksService', () => {
       description: 'i have to eat today',
       categoryId: '50376a95-11fb-4310-a36c-b08c6c537874',
     };
+    const mockCategory = {
+      id: '50376a95-11fb-4310-a36c-b08c6c537874',
+      name: 'first',
+    };
 
     it('should create a new task', async () => {
-      jest.spyOn(categoryService, 'findOneCategory').mockResolvedValue(null);
+      jest
+        .spyOn(categoryService, 'findOneCategory')
+        .mockResolvedValue(mockCategory);
       jest.spyOn(repository, 'create').mockResolvedValue(mockTask);
 
       const result = await taskService.create(newTask as CreateTaskDto);
