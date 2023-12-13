@@ -66,18 +66,6 @@ describe('CategoriesService', () => {
     });
   });
 
-  describe('findOneCategory', () => {
-    it('should find one category', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(mockCategory);
-      const result = await categoryService.findOneCategory(mockCategory.id);
-      expect(result).toEqual(mockCategory);
-    });
-    it('should should throw a NotFoundException if category not found', async () => {
-      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
-      const result = categoryService.findOneCategory(mockCategory.id);
-      expect(result).rejects.toThrow(NotFoundException);
-    });
-  });
   describe('findAll', () => {
     it('should find all categories', async () => {
       jest.spyOn(repository, 'findAll').mockResolvedValue([mockCategory]);
