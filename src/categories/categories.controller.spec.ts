@@ -59,4 +59,13 @@ describe('CategoriesController', () => {
       expect(result).toEqual(mockCategory);
     });
   });
+
+  describe('deleteCategory', () => {
+    it('should delete a category', async () => {
+      const result = await categoryController.deleteCategory(mockCategory.id);
+
+      expect(categoryService.delete).toHaveBeenCalled();
+      expect(result).toEqual('Data deleted successfully');
+    });
+  });
 });
