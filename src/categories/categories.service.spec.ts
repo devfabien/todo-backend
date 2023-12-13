@@ -3,11 +3,13 @@ import { CategoriesService } from './categories.service';
 import { JsonDbRepository } from 'src/db/json-db-repository';
 import { Category } from './entity/category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
-import { NotFoundException } from '@nestjs/common';
+import { ConflictException, NotFoundException } from '@nestjs/common';
+import { TasksService } from '../tasks/tasks.service';
 
 describe('CategoriesService', () => {
   let categoryService: CategoriesService;
   let repository: JsonDbRepository<Category>;
+  let taskService: TasksService;
 
   const mockCategory = {
     id: '9abefa25-9d39-45d8-9840-145e9ea6b9d4',
@@ -22,8 +24,13 @@ describe('CategoriesService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CategoriesService,
+        TasksService,
         {
           provide: 'CategoryRepository',
+          useValue: mockService,
+        },
+        {
+          provide: 'TaskRepository',
           useValue: mockService,
         },
       ],
@@ -31,6 +38,7 @@ describe('CategoriesService', () => {
 
     categoryService = module.get<CategoriesService>(CategoriesService);
     repository = module.get<JsonDbRepository<Category>>('CategoryRepository');
+    taskService = module.get<TasksService>(TasksService);
   });
 
   it('should be defined', () => {
@@ -41,11 +49,18 @@ describe('CategoriesService', () => {
       name: 'first category',
     };
     it('should create a new category', async () => {
+      jest.spyOn(repository, 'findAll').mockResolvedValue([]);
       jest.spyOn(repository, 'create').mockResolvedValue(mockCategory);
       const result = await categoryService.create(
         newCategory as CreateCategoryDto,
       );
       expect(result).toEqual(mockCategory);
+    });
+    it('should throw a conflict exception when category already exists', async () => {
+      jest.spyOn(repository, 'findAll').mockResolvedValue([mockCategory]);
+      expect(
+        categoryService.create(newCategory as CreateCategoryDto),
+      ).rejects.toThrow(ConflictException);
     });
   });
 
