@@ -1,7 +1,9 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  Param,
   Post,
   UsePipes,
   ValidationPipe,
@@ -23,5 +25,10 @@ export class CategoriesController {
   @UsePipes(new ValidationPipe())
   async createCategory(@Body() category: CreateCategoryDto): Promise<Category> {
     return await this.categoryService.create(category);
+  }
+
+  @Delete(':id')
+  async deleteCategory(@Param('id') id: string): Promise<string> {
+    return this.categoryService.delete(id);
   }
 }
