@@ -5,6 +5,7 @@ import { Category } from './entity/category.entity';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { TasksService } from '../tasks/tasks.service';
+import { TaskStatus } from '../tasks/entity/task.entity';
 
 describe('CategoriesService', () => {
   let categoryService: CategoriesService;
@@ -100,6 +101,24 @@ describe('CategoriesService', () => {
 
       expect(categoryService.delete(mockCategory.id)).rejects.toThrow(
         NotFoundException,
+      );
+    });
+
+    it('should throw a conflict exception when deleting a referenced category', async () => {
+      const mockTask = {
+        id: 'e16328dd-c325-4098-b5a8-3002c3915813',
+        title: 'eat',
+        description: 'i have to eat today',
+        categoryId: '9abefa25-9d39-45d8-9840-145e9ea6b9d4',
+        status: TaskStatus.OPEN,
+      };
+      jest.spyOn(taskService, 'findAll').mockResolvedValue([mockTask]);
+      jest
+        .spyOn(repository, 'remove')
+        .mockResolvedValue('Data deleted successfully');
+
+      expect(categoryService.delete(mockCategory.id)).rejects.toThrow(
+        ConflictException,
       );
     });
   });
