@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { TasksController } from './tasks.controller';
 import { TaskStatus } from './entity/task.entity';
 import { TasksService } from './tasks.service';
+import { CreateTaskDto } from './dto/create-task.dto';
 
 describe('TasksController', () => {
   let taskController: TasksController;
@@ -18,7 +19,7 @@ describe('TasksController', () => {
   const mockService = {
     findOne: jest.fn().mockResolvedValue(mockTask),
     findAll: jest.fn().mockResolvedValue([mockTask]),
-    create: jest.fn(),
+    create: jest.fn().mockResolvedValue(mockTask),
     delete: jest.fn(),
   };
 
@@ -52,6 +53,19 @@ describe('TasksController', () => {
       const result = await taskController.getAllTasks();
       expect(taskService.findAll).toHaveBeenCalled();
       expect(result).toEqual([mockTask]);
+    });
+  });
+  describe('createTask', () => {
+    it('should create a new task', async () => {
+      const newTask = {
+        title: 'eat',
+        description: 'i have to eat today',
+        categoryId: '50376a95-11fb-4310-a36c-b08c6c537874',
+      };
+
+      const result = await taskController.createTask(newTask as CreateTaskDto);
+      expect(taskService.create).toHaveBeenCalled();
+      expect(result).toEqual(mockTask);
     });
   });
 });
