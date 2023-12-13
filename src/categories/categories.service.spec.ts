@@ -14,7 +14,7 @@ describe('CategoriesService', () => {
   };
   const mockService = {
     findAll: jest.fn(),
-    findOneCategory: jest.fn(),
+    findOne: jest.fn(),
     create: jest.fn(),
   };
   beforeEach(async () => {
@@ -44,6 +44,14 @@ describe('CategoriesService', () => {
       const result = await categoryService.create(
         newCategory as CreateCategoryDto,
       );
+      expect(result).toEqual(mockCategory);
+    });
+  });
+
+  describe('findOneCategory', () => {
+    it('should find one category', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(mockCategory);
+      const result = await categoryService.findOneCategory(mockCategory.id);
       expect(result).toEqual(mockCategory);
     });
   });
