@@ -101,5 +101,12 @@ describe('TasksService', () => {
 
       expect(result).toEqual('Data deleted successfully');
     });
+    it('should throw a NotFoundException if the task is not found', async () => {
+      jest.spyOn(repository, 'remove').mockResolvedValue(null);
+
+      expect(taskService.remove(mockTask.id)).rejects.toThrow(
+        NotFoundException,
+      );
+    });
   });
 });
