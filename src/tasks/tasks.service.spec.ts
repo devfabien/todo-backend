@@ -90,6 +90,11 @@ describe('TasksService', () => {
 
       expect(result).toEqual(mockTask);
     });
+    it('should should throw a NotFoundException if category not found', async () => {
+      jest.spyOn(repository, 'findOne').mockResolvedValue(null);
+      const result = categoryService.findOneCategory(newTask.categoryId);
+      expect(result).rejects.toThrow(NotFoundException);
+    });
   });
   describe('delete', () => {
     it('should delete a task', async () => {
