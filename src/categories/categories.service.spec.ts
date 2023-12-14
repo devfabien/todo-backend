@@ -1,0 +1,113 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { CategoriesService } from './categories.service';
+import { JsonDbRepository } from 'src/db/json-db-repository';
+import { Category } from './entity/category.entity';
+import { CreateCategoryDto } from './dto/create-category.dto';
+import { ConflictException, NotFoundException } from '@nestjs/common';
+import { TasksService } from '../tasks/tasks.service';
+import { TaskStatus } from '../tasks/entity/task.entity';
+
+describe('CategoriesService', () => {
+  let categoryService: CategoriesService;
+  let repository: JsonDbRepository<Category>;
+  let taskService: TasksService;
+
+  const mockCategory = {
+    id: '9abefa25-9d39-45d8-9840-145e9ea6b9d4',
+    name: 'first category',
+  };
+  const mockService = {
+    findAll: jest.fn(),
+    findOne: jest.fn(),
+    create: jest.fn(),
+    remove: jest.fn(),
+  };
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        CategoriesService,
+        TasksService,
+        {
+          provide: 'CategoryRepository',
+          useValue: mockService,
+        },
+        {
+          provide: 'TaskRepository',
+          useValue: mockService,
+        },
+      ],
+    }).compile();
+
+    categoryService = module.get<CategoriesService>(CategoriesService);
+    repository = module.get<JsonDbRepository<Category>>('CategoryRepository');
+    taskService = module.get<TasksService>(TasksService);
+  });
+
+  it('should be defined', () => {
+    expect(categoryService).toBeDefined();
+  });
+  describe('create category', () => {
+    const newCategory = {
+      name: 'first category',
+    };
+    it('should create a new category', async () => {
+      jest.spyOn(repository, 'findAll').mockResolvedValue([]);
+      jest.spyOn(repository, 'create').mockResolvedValue(mockCategory);
+      const result = await categoryService.create(
+        newCategory as CreateCategoryDto,
+      );
+      expect(result).toEqual(mockCategory);
+    });
+    it('should throw a conflict exception when category already exists', async () => {
+      jest.spyOn(repository, 'findAll').mockResolvedValue([mockCategory]);
+      expect(
+        categoryService.create(newCategory as CreateCategoryDto),
+      ).rejects.toThrow(ConflictException);
+    });
+  });
+
+  describe('findAll', () => {
+    it('should find all categories', async () => {
+      jest.spyOn(repository, 'findAll').mockResolvedValue([mockCategory]);
+
+      const result = await categoryService.findAll();
+      expect(result).toEqual([mockCategory]);
+    });
+  });
+  describe('delete', () => {
+    it('should delete a category', async () => {
+      jest
+        .spyOn(repository, 'remove')
+        .mockResolvedValue('Data deleted successfully');
+
+      expect(await categoryService.delete(mockCategory.id)).toEqual(
+        'Data deleted successfully',
+      );
+    });
+    it('should throw a not found exception if category is not found', async () => {
+      jest.spyOn(repository, 'remove').mockResolvedValue(null);
+
+      expect(categoryService.delete(mockCategory.id)).rejects.toThrow(
+        NotFoundException,
+      );
+    });
+
+    it('should throw a conflict exception when deleting a referenced category', async () => {
+      const mockTask = {
+        id: 'e16328dd-c325-4098-b5a8-3002c3915813',
+        title: 'eat',
+        description: 'i have to eat today',
+        categoryId: '9abefa25-9d39-45d8-9840-145e9ea6b9d4',
+        status: TaskStatus.OPEN,
+      };
+      jest.spyOn(taskService, 'findAll').mockResolvedValue([mockTask]);
+      jest
+        .spyOn(repository, 'remove')
+        .mockResolvedValue('Data deleted successfully');
+
+      expect(categoryService.delete(mockCategory.id)).rejects.toThrow(
+        ConflictException,
+      );
+    });
+  });
+});
